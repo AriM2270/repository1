@@ -1,46 +1,84 @@
 #include "msp.h"
+#include <stdint.h>
+
+int miliseconds = 0;
+int distance = 0;
+long sensor = 0;
 
 
-/**
- * main.c
- */
-void main(void)
+void initiateTrigger(void){
+
+}
+
+static void Delay(uint32_t loop)
 {
-	WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;		// stop watchdog timer
+    volatile uint32_t i;
 
-//attach TX to Echo
-//attach RX to Trig
-
-// defines variables for measurement
-// variable for the duration of sound wave travel
-// variable for the distance measurement
+    for (i = 0 ; i < loop ; i++);
 }
 
-//setup for ultra-sonic
-void setup() {
-  //pinMode(trig, OUTPUT); // Sets TRIG as an OUTPUT
-  //pinMode(echo, INPUT); // Sets ECHO as an INPUT
-}
-//loop for determining distance
-void loop() {
-  // Clears the trigPin condition
-  //digitalWrite(trigPin, LOW);
-  //delayMicroseconds(2);
-  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
-  //digitalWrite(trigPin, HIGH);
-  //delayMicroseconds(10);
-  //digitalWrite(trig, LOW);
-  // Reads the echoPin, returns the sound wave travel time in microseconds
-  //duration = pulseIn(echo, HIGH);
-  // Calculating the distance
-  //distance = duration * 0.034 / 2; // Speed of sound wave divided by 2 (go and back)
-}
-//enable interrupts
-__enable_interrupt();
+int main(void)
+{
 
-//check and clear interrupts
-//if(peripheral-> I'm actually not sure & flag(meaning flag is high)) //check flag
-    {
-        //peripheral -> I'm actually not sure again  &= ~flag(makes flag low); //clear interrupt flag
-        //activate servo stuffs
+    WDT_A->CTL = WDT_A_CTL_PW |             // Stop watchdog timer
+            WDT_A_CTL_HOLD;
+    uart();
+    gpio();
+    uart2();
+    timer();
+    uart_puts(const char *str)
+
+    while(1){
+
+        //        P2->IE &= ~BIT7;          // disable interupt
+        P2->DIR |= BIT6;          // trigger pin as output
+        P2->OUT |= BIT6;          // generate pulse
+        Delay(100);               // for 10us
+        P2->OUT &= ~BIT6;         // stop pulse
+        //        P2->IE |= BIT7;          // disable interupt
+        P2->IFG = 0;              // clear P2 interrupt just in case anything happened before
+        P2->IES &= ~BIT7;         // rising edge on ECHO pin
+        Delay(30000);             // delay for 30ms (after this time echo times out if there is no object detected)
+        distance = sensor/58;     // converting ECHO lenght into cm
+        char buffer[50];
+        sprintf(buffer,"distance is %d\n",distance);
+        uart_puts(buffer);
+        if(distance < 300 && distance != 0)
+            P1->OUT |= BIT0;  //turning LED on if distance is less than 20cm and if distance isn't 0.
+        else
+            P1->OUT &= ~BIT0;
+
     }
+
+}
+
+// Timer A0 interrupt
+void PORT2_IRQHandler(void)
+{
+
+    if(P2->IFG & BIT7)  //is there interrupt pending?
+    {
+        if(!(P2->IES & BIT7)) // is this the rising edge?
+        {
+
+            TIMER_A0->CTL |= TIMER_A_CTL_CLR;   // clears timer A
+            miliseconds = 0;
+            P2->IES |=  BIT7;  //falling edge
+        }
+        else
+        {
+            sensor = (long)miliseconds*1000 + (long)TIMER_A0->R;    //calculating ECHO length
+            //            P1->OUT ^= BIT0;
+            P2->IES &=  ~BIT7;  //falling edge
+
+        }
+        P2->IFG &= ~BIT7;             //clear flag
+    }
+}
+
+void TA0_0_IRQHandler(void)
+{
+    //    Interrupt gets triggered on clock cycle
+    miliseconds++;
+    TIMER_A0->CCTL[0] &= ~TIMER_A_CCTLN_CCIFG;
+}
