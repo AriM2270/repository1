@@ -6,13 +6,13 @@ uint32_t error = 0;
 
 void uart(void){
     /*         UART                      */
-        CS->KEY = CS_KEY_VAL;                   // Unlock CS module for register access
-        CS->CTL0 = 0;                           // Reset tuning parameters
-        CS->CTL0 = CS_CTL0_DCORSEL_3;           // Set DCO to 12MHz (nominal, center of 8-16MHz range)
-        CS->CTL1 = CS_CTL1_SELA_2 |             // Select ACLK = REFO
-                CS_CTL1_SELS_3 |                // SMCLK = DCO
-                CS_CTL1_SELM_3;                 // MCLK = DCO
-        CS->KEY = 0;                            // Lock CS module from unintended accesses
+        CS->KEY = CS_KEY_VAL;                   // Allow register access
+        CS->CTL0 = 0;                           // Reset the parameters
+        CS->CTL0 = CS_CTL0_DCORSEL_3;           
+        CS->CTL1 = CS_CTL1_SELA_2 |             
+                CS_CTL1_SELS_3 |                
+                CS_CTL1_SELM_3;                 
+        CS->KEY = 0;                            
 }
 
 void gpio(void){
