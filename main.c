@@ -36,8 +36,7 @@ int main(void)
     uart_puts(const char *str)
 
     while(1){
-
-        //        P2->IE &= ~BIT7;          // disable interupt
+        
         P2->DIR |= BIT6;          // trigger pin as output
         P2->OUT |= BIT6;          // generate pulse
         Delay(100);               // for 10us
@@ -73,18 +72,17 @@ void PORT2_IRQHandler(void)
         if(!(P2->IES & BIT7)) // is this the rising edge?
         {
 
-            TIMER_A0->CTL |= TIMER_A_CTL_CLR;   // clears timer A
+            TIMER_A0->CTL |= TIMER_A_CTL_CLR;   //clear timer A
             miliseconds = 0;
             P2->IES |=  BIT7;  //falling edge
         }
         else
         {
-            sensor = (long)miliseconds*1000 + (long)TIMER_A0->R;    //calculating ECHO length
-            //            P1->OUT ^= BIT0;
+            sensor = (long)miliseconds*1000 + (long)TIMER_A0->R;    //calculate ECHO length
             P2->IES &=  ~BIT7;  //falling edge
 
         }
-        P2->IFG &= ~BIT7;             //clear flag
+        P2->IFG &= ~BIT7; //clear flag
     }
 }
 
