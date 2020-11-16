@@ -49,7 +49,12 @@ int main(void)
         sprintf(buffer,"distance is %d\n",distance);
         uart_puts(buffer);
         if(distance < 300 && distance != 0)
-            P1->OUT |= BIT0;  //turning LED on if distance is less than 20cm and if distance isn't 0.
+            P1->OUT |= BIT0;  //turning LED on if distance is less than 20cm and isn't 0
+         //TurnRight
+        while(state == 4){
+            servo_write(ULL,360);
+            servo_write(ULA,-360)
+        }
         else
             P1->OUT &= ~BIT0;
 
