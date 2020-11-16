@@ -1,5 +1,10 @@
 #include "msp.h"
-#include <stdint.h>
+#include "stdint.h"
+#include "i2c.h"
+#include "pca9685.h"
+#include "servo.h"
+#include "stIMU.h"
+#include "stdio.h"
 
 int miliseconds = 0;
 int distance = 0;
