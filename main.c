@@ -1,4 +1,5 @@
-//code created by Chandra Kiran Saladi and modified
+//code created by Chandra Kiran Saladi and modified 
+//https://github.com/ChandraKiranSaladi/MSP432-Ultrasonic-UART/blob/master/MSP432-Ultrasonic.c
 
 #include "msp.h"
 #include "stdint.h"
