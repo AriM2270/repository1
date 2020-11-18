@@ -9,7 +9,7 @@
 #include "stIMU.h"
 #include "stdio.h"
 
-int miliseconds = 0;
+int mili = 0;
 int distance = 0;
 long sensor = 0;
 
@@ -37,26 +37,23 @@ int main(void)
     uart_puts(const char *str)
 
     while(1){
-        
-        P2->DIR |= BIT6;          // trigger pin as output
-        P2->OUT |= BIT6;          // generate pulse
-        Delay(100);               // for 10us
-        P2->OUT &= ~BIT6;         // stop pulse
-        //        P2->IE |= BIT7;          // disable interupt
-        P2->IFG = 0;              // clear P2 interrupt just in case anything happened before
-        P2->IES &= ~BIT7;         // rising edge on ECHO pin
-        Delay(30000);             // delay for 30ms (after this time echo times out if there is no object detected)
-        distance = sensor/58;     // converting ECHO lenght into cm
+
+        P2->DIR |= BIT6;          // set 2.6 as an output to trigger must use 2.6 and 2.7 because they're the eUSCI ports (ie the UART ports) 
+        P2->OUT |= BIT6;          // generate the output trigger 
+        Delay(100);               
+        P2->OUT &= ~BIT6;         // stop the output trigger 
+        P2->IFG = 0;              // clear P2.6 interrupt
+        P2->IES &= ~BIT7;         // P2.7 gets set low 
+        Delay(30000);             
+        distance = sensor/58;     // convert ECHO into cm
         char buffer[50];
-        sprintf(buffer,"distance is %d\n",distance);
         uart_puts(buffer);
         if(distance < 300 && distance != 0)
-            P1->OUT |= BIT0;  //turning LED on if distance is less than 20cm and isn't 0
-         //TurnRight
-        while(state == 4){
-            servo_write(ULL,360);
-            servo_write(ULA,-360)
-        }
+            P1->OUT |= BIT0;  //turning LED on if distance is less than 20cm and distance isn't 0.
+                //TurnRight
+                while(state == 4){
+                    servo_write(ULL,360);
+                    servo_write(ULA,-360)
         else
             P1->OUT &= ~BIT0;
 
@@ -64,32 +61,31 @@ int main(void)
 
 }
 
-// Timer A0 interrupt
 void PORT2_IRQHandler(void)
 {
 
-    if(P2->IFG & BIT7)  //is there interrupt pending?
+    if(P2->IFG & BIT7)  //check for interrupt from P2.7 
     {
-        if(!(P2->IES & BIT7)) // is this the rising edge?
+        if(!(P2->IES & BIT7)) //if we're on the falling edge of the P2.7 interrupt
         {
 
-            TIMER_A0->CTL |= TIMER_A_CTL_CLR;   //clear timer A
-            miliseconds = 0;
-            P2->IES |=  BIT7;  //falling edge
+            TIMER_A0->CTL |= TIMER_A_CTL_CLR;   // clear timer A
+            mili = 0;
+            P2->IES |=  BIT7; 
         }
         else
         {
-            sensor = (long)miliseconds*1000 + (long)TIMER_A0->R;    //calculate ECHO length
-            P2->IES &=  ~BIT7;  //falling edge
+            sensor = (long)mili*1000 + (long)TIMER_A0->R;    //calculate ECHO length
+            P2->IES &=  ~BIT7; //set it low again 
 
         }
-        P2->IFG &= ~BIT7; //clear flag
+        P2->IFG &= ~BIT7;             //clear interrupt flag
     }
 }
 
 void TA0_0_IRQHandler(void)
 {
-    //    Interrupt gets triggered on clock cycle
-    miliseconds++;
+    //trigger the Timer A interrupt on clock
+    mili++;
     TIMER_A0->CCTL[0] &= ~TIMER_A_CCTLN_CCIFG;
 }
