@@ -48,8 +48,8 @@ int main(void)
         distance = sensor/58;     // convert ECHO into cm
         char buffer[50];
         uart_puts(buffer);
-        if(distance < 300 && distance != 0)
-            P1->OUT |= BIT0;  //turning LED on if distance is less than 20cm and distance isn't 0.
+        if(distance < 300 && distance !=< 0)
+            P1->OUT |= BIT0;  //turning LED on if distance is less than 20cm and distance isn't 0 or negative
                 //TurnRight
                 while(state == 4){
                     servo_write(ULL,360);
