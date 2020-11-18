@@ -6,9 +6,11 @@
  *
  *  Created on: Jun 22, 2020
  *      Author: Tyler
+ 
+        modified by Michael Pogrebitskiy
  */
 
-//private functions
+
 
 //this function converts degrees to a count out of 4095
 uint16_t degreeConv(int degrees){
@@ -26,8 +28,9 @@ void servo_write(uint8_t servo, uint8_t degrees){
     uint8_t countL = count & LOW_MASK;
 
     switch(servo){
+            
     case 0:
-        servo = PCA_SERVO0_BASE;
+        servo = PCA_SERVO0_BASE; //Depending on the servo chosen, sets the servo to the correct BASE.
         break;
     case 1:
         servo = PCA_SERVO1_BASE;
@@ -78,55 +81,35 @@ void servo_write(uint8_t servo, uint8_t degrees){
         assert(false);
     }
 
-    uint8_t payload[2];
+    uint8_t info[2]; //creates an array to hold corresponding values
 
-    payload[0] = servo;
-    payload[1] = 0x00;
+    info[0] = servo;
+    info[1] = 0x00;
 
-    i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, payload, 2, 0x00); //ON_L
+    i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, payload, 2, 0x00); 
 
-    servo++;
+    servo++; //sets to next servo
 
-    payload[0] = servo;
-    payload[1] = 0x00;
+    info[0] = servo;
+    info[1] = 0x00;
 
-    i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, payload, 2, 0x00); //ON_H
-
-    servo++;
-
-    payload[0] = servo;
-    payload[1] = countL;
-
-    i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, payload, 2, 0x00); //OFF_L
+    i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, payload, 2, 0x00);
 
     servo++;
 
-    payload[0] = servo;
-    payload[1] = countH;
+    info[0] = servo;
+    info[1] = countL;
 
-    i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, payload, 2, 0x00); //OFF_H
+    i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, payload, 2, 0x00);
+
+    servo++;
+
+    info[0] = servo;
+    info[1] = countH;
+
+    i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, payload, 2, 0x00); 
 
 }
-
-
-
-void pca9685_init(void){
-
-    //set PWM frequency
-    uint8_t array[2];
-
-    array[0] = PCA_MODE1;
-    array[1] = PCA_MODE1_SLEEP;
-    i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, array, 2, 0x00);
-    i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, array, 2, 0x00);
-
-    array[0] = PCA_PRE_SCALE;
-    array[1] = PRESCALER_50HZ;
-    i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, array, 2, 0x00);
-
-    array[0] = PCA_MODE1;
-    array[1] = 0x00;
-    i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, array, 2, 0x00);
 
 }
 
