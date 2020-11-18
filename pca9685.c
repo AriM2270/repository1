@@ -13,12 +13,6 @@
 
 
 //this function converts degrees to a count out of 4095
-uint16_t degreeConv(int degrees){
-    if(degrees < 0) degrees = 0;
-    if(degrees >180)degrees = 180;
-
-    return round(1.97*degrees + 123);
-}
 
 void servo_write(uint8_t servo, uint8_t degrees){
 
