@@ -5,7 +5,7 @@
 #include "stIMU.h"
 #include "stdio.h"
 
-
+								//used code from Tyler, in the IMU_Testbench code posted on canvas.
 
 volatile int state = 0;
 
@@ -83,28 +83,30 @@ void main(void)
     }
 
     //Moving Position1
-    while(state == 2){
-        servo_write(URL,-360);
-        servo_write(LRL,-360);
+    while(state == 2){		//coded from here down. Logic comes from to move,	    		
+        servo_write(URL,-360);	//The front left leg must move simultaneously with the back right leg.
+        servo_write(LRL,-360);	//This portion moves the front left and back right leg.
         servo_write(URA,360);
         servo_write(LRA,360);
-        state = 3;
+        state = 3;		//After this state, it changes to state 3 to continue moving.
 
     }
 
     //Moving Position2
     while(state == 3){
-        servo_write(ULL, 360);
-        servo_write(LLL, 360);
         servo_write(ULA, -360);
         servo_write(LLA, -360);
-        state = 2;
+	servo_write(ULL, 360); //This state moves the front right leg, and the back left leg together.
+        servo_write(LLL, 360);
+        state = 2;		//Changes the state to state 2, to continue moving forward.
     }
 
     //TurnRight
-    while(state == 4){
-        servo_write(ULL,360);
-        servo_write(ULA,-360);
+    while(state == 4){		//This state turns right by moving the front left leg, and the back left leg, while keeping the rest stationary.
+        servo_write(URL, -360);	
+        servo_write(LRL, -360);
+	servo_write(ULA, 360);
+	servo_write(LLA, 360);
 
     }
 
