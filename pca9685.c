@@ -75,7 +75,7 @@ void servo_write(uint8_t servo, uint8_t degrees){
     info[1] = degrees;
 
     i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, info, 2, 0x00); 
-p
+
 }
 
 }
