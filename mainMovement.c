@@ -35,14 +35,6 @@ void main(void)
     //EUSCI_B0 uses P1.7 as SCL and P1.6 as SDA
     i2c_open(EUSCI_B0, &i2c_open_struct);
 
-    int16_t mx, my, mz;
-    uint8_t data;
-    int i;
-
-    while(state == 0){
-        for(i=0; i<200000; i++);
-        i2c_start(EUSCI_B0, LIS3MDL_MAG_I2C_ADDRESS, READ, &data, 1, LIS3MDL_MAG_STATUS_REG);
-    }
 
     //Standing Position
     while(state == 1){
