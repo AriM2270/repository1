@@ -86,28 +86,28 @@ void servo_write(uint8_t servo, uint8_t degrees){
     info[0] = servo;
     info[1] = 0x00;
 
-    i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, payload, 2, 0x00); 
+    i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, info, 2, 0x00); 
 
     servo++; //sets to next servo
 
     info[0] = servo;
     info[1] = 0x00;
 
-    i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, payload, 2, 0x00);
+    i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, info, 2, 0x00);
 
     servo++;
 
     info[0] = servo;
     info[1] = countL;
 
-    i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, payload, 2, 0x00);
+    i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, info, 2, 0x00);
 
     servo++;
 
     info[0] = servo;
     info[1] = countH;
 
-    i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, payload, 2, 0x00); 
+    i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, info, 2, 0x00); 
 
 }
 
