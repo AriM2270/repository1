@@ -12,14 +12,8 @@
 
 
 
-//this function converts degrees to a count out of 4095
 
 void servo_write(uint8_t servo, uint8_t degrees){
-
-    uint16_t count = degreeConv(degrees);
-
-    uint8_t countH = count >> 8;
-    uint8_t countL = count & LOW_MASK;
 
     switch(servo){
             
@@ -92,14 +86,14 @@ void servo_write(uint8_t servo, uint8_t degrees){
     servo++;
 
     info[0] = servo;
-    info[1] = countL;
+    info[1] = degrees;
 
     i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, info, 2, 0x00);
 
     servo++;
 
     info[0] = servo;
-    info[1] = countH;
+    info[1] = degrees;
 
     i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, info, 2, 0x00); 
 
