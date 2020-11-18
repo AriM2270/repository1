@@ -1,11 +1,5 @@
-#include "msp.h"
-#include "i2c.h"
 #include "pca9685.h"
-#include "servo.h"
-#include "stIMU.h"
-#include "stdio.h"
-
-								//used code from Tyler, in the IMU_Testbench code posted on canvas.
+								//used code from Tyler, in the IMU_Testbench code posted on canvas.								//modified by Michael Pogrebitskiy
 
 volatile int state = 0;
 
@@ -14,7 +8,7 @@ void main(void)
  {
 	WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD;		// stop watchdog timer
 
-	//set up Button Interrupt
+    //set up Button Interrupt
     P1->DIR &= ~BIT1;
     P1->OUT |= BIT1;
     P1->REN |= BIT1;
@@ -41,32 +35,13 @@ void main(void)
     //EUSCI_B0 uses P1.7 as SCL and P1.6 as SDA
     i2c_open(EUSCI_B0, &i2c_open_struct);
 
-    //pca9685_init(); //sets up PCA to output at the correct frequency
-    config_LIS3MDL();
-
     int16_t mx, my, mz;
     uint8_t data;
     int i;
 
-
-    //Neutral Position
     while(state == 0){
         for(i=0; i<200000; i++);
-        //i2c_start(EUSCI_B0, LIS3MDL_MAG_I2C_ADDRESS, READ, &data, 1, LIS3MDL_MAG_STATUS_REG);
         i2c_start(EUSCI_B0, LIS3MDL_MAG_I2C_ADDRESS, READ, &data, 1, LIS3MDL_MAG_STATUS_REG);
-        printf("status 1: %d\n",data);
-        for(i=0; i<1000; i++);
-        mx = read_magnetometer_x();
-        my = read_magnetometer_y();
-        mz = read_magnetometer_z();
-        printf("x: %d\n", mx);
-        printf("y: %d\n", my);
-        printf("z: %d\n", mz);
-        //printf("status: %d\n", data);
-        printf("\n");
-        printf("\n");
-        //printf("\n");
-        //printf("\n");
     }
 
     //Standing Position
@@ -80,11 +55,12 @@ void main(void)
         servo_write(ULA,90-45); //See Above Comment
         servo_write(LLA,90-45);*/
 
-    }
+    }				//I looked at how Tyler coded the standing position above, and tried to form the moving positions based on
+				//the logic from the above code.
 
     //Moving Position1
     while(state == 2){		//coded from here down. Logic comes from to move,	    		
-        servo_write(URL,-360);	//The front left leg must move simultaneously with the back right leg.
+        servo_write(URL,-360);	//the front left leg must move simultaneously with the back right leg.
         servo_write(LRL,-360);	//This portion moves the front left and back right leg.
         servo_write(URA,360);
         servo_write(LRA,360);
@@ -112,18 +88,4 @@ void main(void)
 
 }
 
-
-/* Port1 ISR */
-void PORT1_IRQHandler(void){
-    volatile uint32_t j;
-
-    //Change State to Standing Position
-    if(P1->IFG & BIT1)
-        state = 1;
-
-    // Delay for switch debounce
-    for(j = 0; j < 100000; j++)
-
-    P1->IFG &= ~BIT1;
-}
 
