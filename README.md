@@ -1,2 +1,7 @@
-# repository1 very bad pseudo code for the ultrasonic stuff
-main for the repository
+# Code for ECEN2440 Final Project 
+Notes for Ultrasonic Code 
+
+
+Notes for Servo Code 
+
+Notes for other code
