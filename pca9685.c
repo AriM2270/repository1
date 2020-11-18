@@ -72,31 +72,10 @@ void servo_write(uint8_t servo, uint8_t degrees){
     uint8_t info[2]; //creates an array to hold corresponding values
 
     info[0] = servo;
-    info[1] = 0x00;
-
-    i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, info, 2, 0x00); 
-
-    servo++; //sets to next servo
-
-    info[0] = servo;
-    info[1] = 0x00;
-
-    i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, info, 2, 0x00);
-
-    servo++;
-
-    info[0] = servo;
-    info[1] = degrees;
-
-    i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, info, 2, 0x00);
-
-    servo++;
-
-    info[0] = servo;
     info[1] = degrees;
 
     i2c_start(EUSCI_B0, PCA_ADDRESS, WRITE, info, 2, 0x00); 
-
+p
 }
 
 }
