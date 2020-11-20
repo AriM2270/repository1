@@ -8,6 +8,7 @@
 #include "servo.h"
 #include "stIMU.h"
 #include "stdio.h"
+#include "ultra.h"
 
 int mili = 0;
 int distance = 0;
