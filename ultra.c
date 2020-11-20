@@ -43,13 +43,13 @@ void uart2(void){
         // Configure UART
         EUSCI_A0->CTLW0 |= EUSCI_A_CTLW0_SWRST; // Put eUSCI (UART ports) in reset mode 
         EUSCI_A0->CTLW0 = EUSCI_A_CTLW0_SWRST | // Force eUSCI to remain in reset
-                EUSCI_B_CTLW0_SSEL__SMCLK;      // Configure eUSCI clock source
+                EUSCI_B_CTLW0_SSEL__SMCLK;      // Configure eUSCI clock source to be the SMCLK
         EUSCI_A0->BRW = 78;                     
         EUSCI_A0->MCTLW = (2 << EUSCI_A_MCTLW_BRF_OFS) |
                 EUSCI_A_MCTLW_OS16;
 
         EUSCI_A0->CTLW0 &= ~EUSCI_A_CTLW0_SWRST; // Initialize eUSCI
-        EUSCI_A0->IFG &= ~EUSCI_A_IFG_RXIFG;    // Clear eUSCI interrupt flag for RX
+        EUSCI_A0->IFG &= ~EUSCI_A_IFG_RXIFG;    // Clear eUSCI interrupt flag for RX port 
         EUSCI_A0->IE &= ~EUSCI_A_IE_RXIE;        // Disable interrupt for RX
 }
 
@@ -58,7 +58,7 @@ void timer(void){
         TIMER_A0->CCR[0] = 1000-1;                   
         TIMER_A0->CTL = TIMER_A_CTL_TASSEL_2 | TIMER_A_CTL_MC__UP | TIMER_A_CTL_CLR;                  //set TimerA0 to upmode
 
-        __enable_irq();             // Enables interrupts
+        __enable_irq();             // Enables interrupts for whole system 
 }
 
 int uart_puts(const char *str) //transmit UART data to the main file 
@@ -74,7 +74,6 @@ int uart_puts(const char *str) //transmit UART data to the main file
             EUSCI_A0->TXBUF  = *str; //transmit UART data 
             
             if (*str == '\n') {
-                /* Wait for the transmit buffer to be ready */
                 while (!(EUSCI_A0->IFG & EUSCI_A_IFG_TXIFG));
                 EUSCI_A0->TXBUF = '\r';
             }
