@@ -6,8 +6,8 @@ uint32_t error = 0;
 
 void uart(void){
     /*         UART                      */
-        CS->KEY = CS_KEY_VAL;                   // Allow register access
-        CS->CTL0 = 0;                           // Reset the parameters
+        CS->KEY = CS_KEY_VAL;                   // Allow register access for clock system module (ie allows clock divider to work) 
+        CS->CTL0 = 0;                           // Reset the parameters for CS module
         CS->CTL0 = CS_CTL0_DCORSEL_3;           
         CS->CTL1 = CS_CTL1_SELA_2 |             
                 CS_CTL1_SELS_3 |                
